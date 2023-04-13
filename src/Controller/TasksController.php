@@ -31,6 +31,8 @@ class TasksController extends AbstractController
 		$form->handleRequest($request);
 
 		if ($form->isSubmitted() && $form->isValid()) {
+            $user = $this->getUser();
+            $task->setUser($user);
 			$this->taskRepository->save($task);
 
 			$this->addFlash('success', 'La tâche a été bien été ajoutée.');
