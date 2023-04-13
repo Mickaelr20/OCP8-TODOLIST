@@ -6,6 +6,7 @@ use App\Repository\TaskRepository;
 use App\Entity\Task;
 use App\Form\TaskType;
 use App\Task\CreateTaskInterface;
+use App\Task\EditTaskInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,14 +41,14 @@ class TasksController extends AbstractController
 	}
 	
 	#[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
-    public function editAction(Task $task, Request $request)
+    public function editAction(Task $task, Request $request, EditTaskInterface $editTask)
     {
         $form = $this->createForm(TaskType::class, $task);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-			$this->taskRepository->save($task);
+            $editTask($task);
 
             $this->addFlash('success', 'La tâche a bien été modifiée.');
 
