@@ -6,10 +6,10 @@ use App\Repository\UserRepository;
 use App\Entity\User;
 use App\Form\UserType;
 use App\User\CreateUserInterface;
+use App\User\EditUserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 
 #[Route('/users', name: 'user_')]
@@ -42,20 +42,14 @@ class UsersController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
-    public function editAction(User $user, Request $request, UserPasswordHasherInterface $passwordHasher)
+    public function editAction(User $user, Request $request, EditUserInterface $editUser)
     {
         $form = $this->createForm(UserType::class, $user);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $passwordHasher->hashPassword($user, $user->getPassword());
-            $user->setPassword($password);
-
-            $this->userRepository->save($user);
-
+            $editUser($user);
             $this->addFlash('success', "L'utilisateur a bien été modifié");
-
             return $this->redirectToRoute('user_list');
         }
 
