@@ -14,35 +14,38 @@ use Symfony\Component\HttpFoundation\Request;
 #[Route('/tasks', name: 'task_')]
 class TasksController extends AbstractController
 {
-	function __construct(private TaskRepository $taskRepository) {
-		
+    function __construct(private TaskRepository $taskRepository)
+    {
     }
 
-	#[Route('', name: 'list', methods: ['GET'])]
-	public function list()
-	{
-		return $this->render('task/list.html.twig', ['tasks' => $this->taskRepository->findAll()]);
-	}
+    #[Route('', name: 'list', methods: ['GET'])]
+    public function list()
+    {
+        return $this->render('task/list.html.twig', ['tasks' => $this->taskRepository->findAll()]);
+    }
 
-	#[Route('/create', name: 'create', methods: ['GET', 'POST'])]
-	public function createAction(Request $request, CreateTaskInterface $createTask)
-	{
-		$task = new Task();
-		$form = $this->createForm(TaskType::class, $task);
-		$form->handleRequest($request);
+    #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
+    public function createAction(Request $request, CreateTaskInterface $createTask)
+    {
+        $task = new Task();
+        $this->denyAccessUnlessGranted('create', $task);
 
-		if ($form->isSubmitted() && $form->isValid()) {
+        $form = $this->createForm(TaskType::class, $task);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
             $createTask($task, $this->getUser());
-			$this->addFlash('success', 'La tâche a été bien été ajoutée.');
-			return $this->redirectToRoute('task_list');
-		}
+            $this->addFlash('success', 'La tâche a été bien été ajoutée.');
+            return $this->redirectToRoute('task_list');
+        }
 
-		return $this->render('task/create.html.twig', ['form' => $form->createView()]);
-	}
-	
-	#[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
+        return $this->render('task/create.html.twig', ['form' => $form->createView()]);
+    }
+
+    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function editAction(Task $task, Request $request, EditTaskInterface $editTask)
     {
+        $this->denyAccessUnlessGranted('edit', $task);
         $form = $this->createForm(TaskType::class, $task);
 
         $form->handleRequest($request);
@@ -61,20 +64,23 @@ class TasksController extends AbstractController
         ]);
     }
 
-	#[Route('/{id}/toggle', name: 'toggle', methods: ['GET', 'POST'])]
+    #[Route('/{id}/toggle', name: 'toggle', methods: ['GET', 'POST'])]
     public function toggleTaskAction(Task $task)
     {
+        $this->denyAccessUnlessGranted('toggle', $task);
         $task->setIsDone(!$task->isDone());
-		$this->taskRepository->save($task);
+        $this->taskRepository->save($task);
 
         $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));
 
         return $this->redirectToRoute('task_list');
     }
 
-	#[Route('/{id}/delete', name: 'delete', methods: ['GET', 'POST'])]
+    #[Route('/{id}/delete', name: 'delete', methods: ['GET', 'POST'])]
     public function deleteTaskAction(Task $task)
     {
+        $this->denyAccessUnlessGranted('delete', $task);
+
         $this->taskRepository->remove($task);
 
         $this->addFlash('success', 'La tâche a bien été supprimée.');
