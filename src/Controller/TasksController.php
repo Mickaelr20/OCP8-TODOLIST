@@ -64,7 +64,7 @@ class TasksController extends AbstractController
 	#[Route('/{id}/toggle', name: 'toggle', methods: ['GET', 'POST'])]
     public function toggleTaskAction(Task $task)
     {
-        $task->toggle(!$task->isDone());
+        $task->setIsDone(!$task->isDone());
 		$this->taskRepository->save($task);
 
         $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));
