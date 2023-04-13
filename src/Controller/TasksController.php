@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Repository\TaskRepository;
 use App\Entity\Task;
 use App\Form\TaskType;
+use App\Task\CreateTaskInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,20 +24,15 @@ class TasksController extends AbstractController
 	}
 
 	#[Route('/create', name: 'create', methods: ['GET', 'POST'])]
-	public function createAction(Request $request)
+	public function createAction(Request $request, CreateTaskInterface $createTask)
 	{
 		$task = new Task();
 		$form = $this->createForm(TaskType::class, $task);
-
 		$form->handleRequest($request);
 
 		if ($form->isSubmitted() && $form->isValid()) {
-            $user = $this->getUser();
-            $task->setUser($user);
-			$this->taskRepository->save($task);
-
+            $createTask($task, $this->getUser());
 			$this->addFlash('success', 'La tâche a été bien été ajoutée.');
-
 			return $this->redirectToRoute('task_list');
 		}
 
