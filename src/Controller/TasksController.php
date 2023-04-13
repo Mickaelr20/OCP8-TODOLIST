@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Repository\TaskRepository;
 use App\Entity\Task;
 use App\Form\TaskType;
+use App\Task\CreateTaskInterface;
+use App\Task\EditTaskInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,20 +25,15 @@ class TasksController extends AbstractController
 	}
 
 	#[Route('/create', name: 'create', methods: ['GET', 'POST'])]
-	public function createAction(Request $request)
+	public function createAction(Request $request, CreateTaskInterface $createTask)
 	{
 		$task = new Task();
 		$form = $this->createForm(TaskType::class, $task);
-
 		$form->handleRequest($request);
 
 		if ($form->isSubmitted() && $form->isValid()) {
-            $user = $this->getUser();
-            $task->setUser($user);
-			$this->taskRepository->save($task);
-
+            $createTask($task, $this->getUser());
 			$this->addFlash('success', 'La tâche a été bien été ajoutée.');
-
 			return $this->redirectToRoute('task_list');
 		}
 
@@ -44,14 +41,14 @@ class TasksController extends AbstractController
 	}
 	
 	#[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
-    public function editAction(Task $task, Request $request)
+    public function editAction(Task $task, Request $request, EditTaskInterface $editTask)
     {
         $form = $this->createForm(TaskType::class, $task);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-			$this->taskRepository->save($task);
+            $editTask($task);
 
             $this->addFlash('success', 'La tâche a bien été modifiée.');
 
@@ -67,7 +64,7 @@ class TasksController extends AbstractController
 	#[Route('/{id}/toggle', name: 'toggle', methods: ['GET', 'POST'])]
     public function toggleTaskAction(Task $task)
     {
-        $task->toggle(!$task->isDone());
+        $task->setIsDone(!$task->isDone());
 		$this->taskRepository->save($task);
 
         $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));
