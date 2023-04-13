@@ -1,36 +1,66 @@
 {% extends 'base.html.twig' %}
 
-{% block header_img %}<img class="slide-image" src="{{ asset('img/todolist_content.jpg') }}" alt="todo list">{% endblock %}
+{% block header_img %}<img class="slide-image" src="{{ asset('img/todolist_content.jpg') }}" alt="todo list">
+{% endblock %}
 
 {% block body %}
-    <a href="{{ path('task_create') }}" class="btn btn-info pull-right">Créer une tâche</a>
-    <div class="row">
-        {% for task in tasks %}
-        <div class="col-sm-4 col-lg-4 col-md-4">
-            <div class="thumbnail">
-                <div class="caption">
-                    <h4 class="pull-right">
-                        {% if task.isDone %}<span class="glyphicon glyphicon-ok"></span>{% else %}<span class="glyphicon glyphicon-remove"></span>{% endif %}
-                    </h4>
-                    <h4><a href="{{ path('task_edit', {'id' : task.id }) }}">{{ task.title }}</a></h4>
-                    <p>{{ task.content }}</p>
-                </div>
-                <div>
-                    <form action="{{ path('task_toggle', {'id' : task.id }) }}">
-                        <button class="btn btn-success btn-sm pull-right">
-                            {% if not task.isDone %}Marquer comme faite{% else %}Marquer non terminée{% endif %}
-                        </button>
-                    </form>
-                    <form action="{{ path('task_delete', {'id' : task.id }) }}">
-                        <button class="btn btn-danger btn-sm pull-right">Supprimer</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-        {% else %}
-            <div class="alert alert-warning" role="alert">
-                Il n'y a pas encore de tâche enregistrée. <a href="{{ path('task_create') }}" class="btn btn-warning pull-right">Créer une tâche</a>
-            </div>
-        {% endfor %}
-    </div>
+	<div class="row">
+		<div class="col-12">
+			<div class="d-flex justify-content-end">
+				<a href="{{ path('task_create') }}" class="btn btn-info text-white">Créer une tâche</a>
+			</div>
+		</div>
+
+		{% for task in tasks %}
+			<div class="mt-2 col-sm-4 col-lg-4 col-md-4 pb-2">
+				<div class="card">
+					<div class="card-header bg-transparent">
+						<div class="d-flex align-items-center">
+							<div>
+								Par:
+								{{ task.user.username ?? "Anonyme" }}
+							</div>
+							<div class="ms-auto">
+								{% if task.isDone %}
+									<i class="bi bi-check fs-4"></i>
+								{% else %}
+									<i class="bi bi-x fs-4"></i>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+					<div class="card-body">
+						<h5 class="card-title">{{ task.title }}</h5>
+						<p class="card-text">{{ task.content }}</p>
+					</div>
+					<div class="card-footer bg-transparent">
+						<div class="btn-toolbar justify-content-end" role="toolbar" aria-label="Toolbar with button groups">
+							<div class="btn-group btn-group-sm ms-1 me-1 mb-1" role="group" aria-label="Actions">
+								<a href="{{ path('task_toggle', {'id' : task.id }) }}" type="button" class="btn btn-success">
+									{% if not task.isDone %}
+										Marquer comme faite
+									{% else %}
+										Marquer non terminée
+									{% endif %}
+								</a>
+							</div>
+							<div class="btn-group btn-group-sm ms-auto me-1 mb-1" role="group" aria-label="Actions">
+								<a href="{{ path('task_delete', {'id' : task.id }) }}" type="button" class="btn btn-outline-danger" title="Supprimer la tâche">
+									<i class="bi bi-trash"></i>
+								</a>
+								<a href="{{ path('task_edit', {'id' : task.id }) }}" type="button" class="btn btn-primary" title="Modifier la tâche">
+									<i class="bi bi-pencil"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% else %}
+			<div class="d-flex align-items-center mt-2 alert alert-warning" role="alert">
+				Il n'y a pas encore de tâche enregistrée.
+				<a href="{{ path('task_create') }}" class="ms-auto btn btn-warning">Créer une tâche</a>
+			</div>
+		{% endfor %}
+	</div>
 {% endblock %}
