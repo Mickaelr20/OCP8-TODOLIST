@@ -7,7 +7,7 @@
 	<div class="row">
 		<div class="col-12">
 			<div class="d-flex justify-content-end">
-				<a href="{{ path('task_create') }}" class="btn btn-info pull-right text-white">Créer une tâche</a>
+				<a href="{{ path('task_create') }}" class="btn btn-info text-white">Créer une tâche</a>
 			</div>
 		</div>
 
@@ -37,7 +37,10 @@
 						<div class="btn-toolbar justify-content-end" role="toolbar" aria-label="Toolbar with button groups">
 							<div class="btn-group btn-group-sm ms-1 me-1 mb-1" role="group" aria-label="Actions">
 								<a href="{{ path('task_toggle', {'id' : task.id }) }}" type="button" class="btn btn-success">
-									{% if not task.isDone %}Marquer comme faite{% else %}Marquer non terminée
+									{% if not task.isDone %}
+										Marquer comme faite
+									{% else %}
+										Marquer non terminée
 									{% endif %}
 								</a>
 							</div>
@@ -54,9 +57,9 @@
 				</div>
 			</div>
 		{% else %}
-			<div class="alert alert-warning" role="alert">
+			<div class="d-flex align-items-center mt-2 alert alert-warning" role="alert">
 				Il n'y a pas encore de tâche enregistrée.
-				<a href="{{ path('task_create') }}" class="btn btn-warning pull-right">Créer une tâche</a>
+				<a href="{{ path('task_create') }}" class="ms-auto btn btn-warning">Créer une tâche</a>
 			</div>
 		{% endfor %}
 	</div>
