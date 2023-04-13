@@ -1,0 +1,57 @@
+<nav class="navbar navbar-expand-md navbar-light fixed-top" style="background-color: #e3f2fd;" role="navigation">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="{{path('homepage')}}">To Do List app</a>
+		<img src="{{ asset('img/Logo_OpenClassrooms.png') }}" alt="OpenClassrooms"/>
+
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarCollapse">
+			<ul class="navbar-nav me-auto mb-2 mb-md-0">
+				{% if app.user %}
+					{% if app.user.hasRole('ROLE_ADMIN') %}
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="usersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								Utilisateurs
+							</a>
+							<ul class="dropdown-menu dropdown-menu-light" aria-labelledby="usersDropdown">
+								<li>
+									<a class="dropdown-item{{'user_create' == app.request.attributes.get('_route') ? " active" : " "}}" href="{{path('user_create')}}">Nouvel utilisateur</a>
+								</li>
+								<li>
+									<a class="dropdown-item{{'user_list' == app.request.attributes.get('_route') ? " active" : " "}}" href="{{path('user_list')}}">Liste des utilisateurs</a>
+								</li>
+							</ul>
+						</li>
+					{% endif %}
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="usersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							Tâches
+						</a>
+						<ul class="dropdown-menu dropdown-menu-light" aria-labelledby="usersDropdown">
+							<li>
+								<a class="dropdown-item{{'task_create' == app.request.attributes.get('_route') ? " active" : " "}}" href="{{path('task_create')}}">Nouvelle tâche</a>
+							</li>
+							<li>
+								<a class="dropdown-item{{'task_list' == app.request.attributes.get('_route') ? " active" : " "}}" href="{{path('task_list')}}">Liste des tâches</a>
+							</li>
+						</ul>
+					</li>
+				{% endif %}
+			</ul>
+
+			<ul class="navbar-nav mb-2 mb-md-0">
+				{% if app.user %}
+					<li class="nav-item">
+						<a class="nav-link{{'app_logout' == app.request.attributes.get('_route') ? " active" : " "}}" aria-current="page" href="{{ path('app_logout') }}">Se déconnecter</a>
+					</li>
+				{% elseif 'login' != app.request.attributes.get('_route') %}
+					<li class="nav-item">
+						<a class="nav-link{{'app_login' == app.request.attributes.get('_route') ? " active" : " "}}" aria-current="page" href="{{ path('app_login') }}">Se connecter</a>
+					</li>
+				{% endif %}
+			</ul>
+		</div>
+	</div>
+</nav>
