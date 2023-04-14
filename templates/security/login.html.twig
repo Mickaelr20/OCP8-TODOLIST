@@ -1,18 +1,25 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {% if error %}
-        <div class="alert alert-danger" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
+	{% if error %}
+		<div class="alert alert-danger" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+	{% endif %}
 
-    <form action="{{ path('app_login') }}" method="post">
-        <label for="username">Nom d'utilisateur :</label>
-        <input type="text" id="username" name="username" value="{{ last_username }}" />
+	<form action="{{ path('app_login') }}" method="post">
+		<div class="d-flex align-items-center flex-wrap">
+			<div class="d-flex align-items-center me-2 mb-2 flex-wrap">
+				<label for="username" class="me-2">Nom d'utilisateur :</label>
+				<input type="text" id="username" name="username" value="{{ last_username }}" class="d-inline w-auto form-control"/>
+			</div>
+			<div class="d-flex align-items-center me-2 mb-2 flex-wrap">
+				<label for="password" class="me-2">Mot de passe :</label>
+				<input type="password" id="password" name="password" class="d-inline w-auto form-control"/>
+			</div>
+			<div class="d-flex align-items-center me-2 mb-2">
+				<button class="btn btn-success" type="submit">Se connecter</button>
+			</div>
 
-        <label for="password">Mot de passe :</label>
-        <input type="password" id="password" name="password" />
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
-
-        <button class="btn btn-success" type="submit">Se connecter</button>
-    </form>
+			<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+		</div>
+	</form>
 {% endblock %}
